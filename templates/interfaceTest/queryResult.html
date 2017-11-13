@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>queryResult</title>
+</head>
+<body>
+
+<div align="center">
+<a href="{% url 'index' %}">返回接口页</a>
+</div>
+
+{% if results %}
+<table bgcolor="#5f9ea0" border="2 px" align="center">
+    <th>报告名称</th><th>报告时间</th><th>接口总数</th><th>测试通过数</th><th>操作</th>
+    {% for result in results %}
+        <tr><td>{{ result.name }}</td><td>{{ result.date_time }}</td><td>{{ result.sum_count }}</td><td>{{ result.pass_count }}</td><td><a href="{% url 'queryResultDetail' result.id %}">查看详情</a></td></tr>
+    {% endfor %}
+</table>
+    {% else %}
+    <div align="center">
+    <h1>未查到报告信息！</h1>
+    <a href="{% url 'index' %}">返回接口页</a>
+    </div>
+    {% endif %}
+
+</body>
+</html>

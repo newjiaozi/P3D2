@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>报告详情</title>
+</head>
+<body>
+<br/>
+<br/>
+
+{% if result %}
+    <div align="center">
+    <table bgcolor="#5f9ea0" border="2 px" align="center">
+        <tr><th>报告名称</th><th>报告时间</th><th>测试通过数</th><th>接口总数</th></tr>
+        <tr><td>{{ result.name }}</td><td>{{ result.date_time }}</td><td>{{ result.pass_count }}</td><td>{{ result.sum_count }}</td></tr>
+        <tr><th colspan="4"><a href="{% url 'queryResult' %}">返回报告页</a></th></tr>
+    </table>
+    </div>
+{% endif %}
+<br/>
+<br/>
+{% if results %}
+    <div align="center">
+        <table bgcolor="#5f9ea0" border="2 px" align="center">
+            <tr><th>响应结果</th><th>是否通过</th></tr>
+            {% for res in results %}
+                <tr><td>{{ res.response_data }}</td><td>{{ res.is_pass }}</td> </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
+</body>
+</html>

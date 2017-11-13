@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>scan</title>
+    <script language="javascript">
+　　 String.prototype.trim=function(){
+　　    return this.replace(/(^\s*)|(\s*$)/g, "");
+　　 }
+　　 String.prototype.ltrim=function(){
+　　    return this.replace(/(^\s*)/g,"");
+　　 }
+　　 String.prototype.rtrim=function(){
+　　    return this.replace(/(\s*$)/g,"");
+　　 }
+　　</script>
+</head>
+<body>
+
+    <div align="center">
+    {% if request.session.msg %}
+        <h1 style="color: cadetblue" align="center">{{ request.session.msg }}</h1>
+    {% endif %}
+    {% if request.session.res_count %}
+        <h5 style="color: cadetblue" align="center">查询结果总数为：{{ request.session.res_count }}</h5>
+    {% endif %}
+    <br/>
+    <br/>
+    {% if queryInterfaceForm %}
+        <form action="{% url 'queryInterface' %}" method="post" id="search">
+        {% csrf_token %}
+            {{ queryInterfaceForm.as_table }}
+        <input type="submit" value="搜索 ">
+        <a href="{% url 'addInterface' %}"><input type="button" value="添加接口"></a>
+        <a href="{% url 'queryResult' %}"><input type="button" value="查询历史报告"></a>
+        </form>
+    {% endif %}
+
+    {% if f_forms %}
+        <form action="{% url 'uploadInter' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ f_forms.as_table }}
+        <input type="submit" value="上传">
+        </form>
+    {% endif %}
+
+    <br/>
+    <br/>
+    </div>
+
+
+    {% if inter_data %}
+    <div align="center">
+    <form action="{% url 'actionTest' %}" method="post" id="actionTest">
+    {% csrf_token %}
+    <table bgcolor="#5f9ea0" border="2 px" align="center">
+    <tr><th><p><input type="checkbox" value="全选" onclick="selectAll()" id="selectA">全选</p></th><th>接口名称</th><th>场景描述</th><th>接口地址</th><th>接口路径</th><th>所属系统</th><th>请求方法</th><th>头信息</th><th>JSON格式数据</th><th>GET传参</th><th>检查点</th><th>操作</th></tr>
+    {% for data in inter_data %}
+    <tr id="{{ data.id }}" name="{{ data.id }}"><td><input type="checkbox" value="{{ data.id }}"  name="interdataId" onclick="selectSingle()"></td><td>{{ data.name }}</td><td>{{ data.scene_comment }}</td><td>{{ data.host }}</td><td>{{ data.path }}</td><td>{{ data.system_belong }}</td><td>{{ data.method }}</td><td>{{ data.header }}</td><td>{{ data.json_data }}</td><td>{{ data.params }}</td><td>{{ data.checkpoint }}</td><td><input type="button" value="编辑" id="edit{{ data.id }}" onclick="editInter({{ data.id }})"><input type="button" value="删除" id="del{{ data.id }}" name="{{ data.id }}" onclick="confirmDel({{ data.id }})"></td></tr>
+    {% endfor %}
+        <tr><th colspan="12"><label>测试报告名称：</label><input type="text" name="report_name" id="report_name" required></th></tr>
+    <tr><th colspan="6"><input type="button" value="提交执行" onclick="actionTest()"></th><th colspan="6"><input type="button" value="批量编辑" onclick="actionEdit()"></th></tr>
+    </table>
+    </form>
+    </div>
+
+    {% else %}
+    <div align="center">
+    <h2 align="center" style="color: blueviolet">没有查到任何接口信息！</h2>
+    <a href="{% url 'addInterface' %}">添加接口</a>
+    </div>
+    {% endif %}
+
+
+    <form action="{% url 'delInterface' %}" method="post" id="sub_del" hidden>
+        {% csrf_token %}
+        <input type="text"  id="sub_val" name="delname">
+    </form>
+
+    <a id="editInter" href="" hidden></a>
+
+<script type='text/javascript'>
+
+    function trim(s){
+        return s.replace(/(^\s*)|(\s*$)/g, "");
+    }
+
+    function  confirmDel (delid){
+        res = confirm("确认删除？");
+        if(res==true){
+            var sub_val = document.getElementById("sub_val");
+            sub_val.value = delid;
+            document.getElementById("sub_del").submit();
+        }else{
+            return;
+        }
+    }
+
+    function searchInter() {
+        var si = document.getElementById("search");
+        si.submit();
+    }
+
+
+    function selectAll() {
+        var sel = document.getElementById("selectA");
+        var sels = document.getElementsByName("interdataId");
+
+        if(sel.checked == true){
+            for(var i=0;sels.length;i++){
+                sels[i].checked=true
+            }
+        }else{
+            for(var i=0;sels.length;i++){
+                sels[i].checked=false
+            }
+        }
+
+    }
+
+    function editInter(interid) {
+        var toEdit = document.getElementById("toEdit");
+        var editInter = document.getElementById("editInter");
+        editInter.href = "/inter/editInter/"+ interid+"/";
+        editInter.click();
+    }
+
+    function actionTest() {
+        var sels = document.getElementsByName("interdataId");
+        var report_name = document.getElementById("report_name");
+        if(report_name.value == null){
+            alert("请填写报告名称！null");
+            report_name.focus();
+            return
+        }else if (trim(report_name.value) == ""){
+            alert("请填写报告名称！");
+            report_name.value = "";
+            report_name.focus();
+            return
+        }
+        var checked_count = 0;
+        for(var i=0;i<sels.length;i++){
+            if(sels[i].checked == true){
+                checked_count += 1;
+            }else{
+                continue;
+            }
+
+        }
+        if(checked_count == 0){
+            alert("未选中任何接口");
+        }else{
+            sub_sels = document.getElementById("actionTest");
+            sub_sels.action = "{% url 'actionTest' %}"
+            sub_sels.submit();
+        }
+
+    }
+
+    function selectSingle() {
+
+        var sels = document.getElementsByName("interdataId");
+        var checked_sum = 0;
+        for(var i=0;i<sels.length;i++){
+            if(sels[i].checked == true){
+                checked_sum += 1;
+            }else{
+                continue;
+            }
+        }
+
+        var sel = document.getElementById("selectA");
+        if(checked_sum == sels.length){
+            sel.checked=true;
+        }else {
+            sel.checked=false;
+        }
+
+        }
+
+
+    function actionEdit() {
+        var sels = document.getElementsByName("interdataId");
+        var checked_count = 0;
+        for(var i=0;i<sels.length;i++){
+            if(sels[i].checked == true){
+                checked_count += 1;
+            }else{
+                continue;
+            }
+
+        }
+        if(checked_count == 0){
+            alert("未选中任何接口");
+        }else{
+            sub_sels = document.getElementById("actionTest");
+            sub_sels.action = "{% url 'toBulkEdit' %}"
+            sub_sels.submit();
+        }
+
+    }
+
+</script>
+</body>
+</html>

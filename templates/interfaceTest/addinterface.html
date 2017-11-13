@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+
+    <style type="text/css">
+
+    label {
+    display: block;
+    margin: 0px 0px 5px;
+    }
+    textarea{
+    height:100px;
+    padding-top: 10px;
+    }
+    input[type="text"],textarea,select {
+    color: #555;
+    height: 30px;
+    line-height:15px;
+    width: 100%;
+    padding: 0px 0px 0px 10px;
+    margin-top: 2px;
+    border: 1px solid #E5E5E5;
+    background: #FBFBFB;
+    outline: 0;
+    -webkit-box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
+    box-shadow: inset 1px 1px 2px rgba(238, 238, 238, 0.2);
+    font: normal 14px/14px Arial, Helvetica, sans-serif;
+    }
+
+    select {
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance: none;
+    text-indent: 0.01px;
+    text-overflow: '';
+    width:100%;
+    height:30px;
+    }
+
+    button {
+    background-color: #9DC45F;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-border-radius: 5px;
+    border: none;
+    padding: 10px 25px 10px 25px;
+    color: #FFF;
+    text-shadow: 1px 1px 1px #949494;
+    }
+    button:hover {
+    background-color:#80A24A;
+    }
+
+{#    form{#}
+{#    position: absolute;/*绝对定位*/#}
+{#    width: 300px;#}
+{#    height: 200px;#}
+{#    text-align: center;/*(让div中的内容居中)*/#}
+{#    top: 50%;#}
+{#    left: 50%;#}
+{#    margin-top: -210px;#}
+{#    margin-left: -150px;#}
+{#    }#}
+
+    </style>
+</head>
+<body>
+{% if request.session.msg %}
+<h2 align="center" style="color: cadetblue">{{ request.session.msg }}</h2>
+{% endif %}
+
+<div style="width:100%;text-align:center">
+<form action="{% url 'addInterface' %}" method="post">
+{% csrf_token %}
+{% if data_form %}
+    {{ data_form.as_table }}
+{% endif %}
+<input type="submit" value="添加">
+</form>
+    <a href="{% url 'index' %}">查询已有接口</a>
+</div>
+</body>
+</html>

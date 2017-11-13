@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+</head>
+<body>
+    <div align="center">
+    <br/>
+    <br/>
+    {% if queryInterfaceForm %}
+        <form action="{% url 'queryInterface' %}" method="post" id="search">
+        {% csrf_token %}
+            {{ queryInterfaceForm.as_table }}
+        <input type="submit" value="搜索 ">
+        <a href="{% url 'addInterface' %}"><input type="button" value="添加接口"></a>
+        </form>
+
+    {% endif %}
+
+    <br/>
+    <br/>
+    </div>
+</body>
+</html>
