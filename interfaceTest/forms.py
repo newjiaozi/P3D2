@@ -57,5 +57,7 @@ class BulkEditForms(forms.Form):
     system_belong = forms.ChoiceField(choices=sc,label="所属系统",required=False)
     method = forms.ChoiceField(choices=rm,label="请求方法",required=False)
     header = forms.CharField(max_length=200,label="头信息",required=False,widget=forms.Textarea(attrs={'required': False}))
+    json_data = forms.CharField(max_length=2000,label="JSON格式数据（POST）",required=False,widget=forms.Textarea(attrs={'required': False}))
+    params =  forms.CharField(max_length=2000,label="GET传参",required=False,widget=forms.Textarea(attrs={'required': False}))
     checkpoint = forms.CharField(max_length=1000,label="检查点",widget=forms.Textarea,required=False)
 

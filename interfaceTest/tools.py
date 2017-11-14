@@ -19,7 +19,6 @@ def handleNullDict(**kwargs):
 
 def getInterface(report_name,*xargs):
         data_time = datetime.now()
-
         try:
             res = models.ResultModel.objects.create(name=report_name, date_time=data_time)
         except Exception as e:
@@ -37,11 +36,13 @@ def getInterface(report_name,*xargs):
                 result_pass = True
                 inter_method = inter.method
                 headers_data = eval(inter.header)
-                json_data = eval(inter.json_data)
+
+                json_data = eval(inter.json_data) if inter.json_data else {}
+                params_data = eval(inter.params) if inter.params else {}
                 if isinstance(headers_data,dict) and isinstance(json_data,dict) and isinstance(inter_checkpoint,dict):
                     try:
                         if inter_method == "POST":
-                            resp = requests.request("POST",inter.host+inter.path,headers=eval(inter.header),json=eval(inter.json_data))
+                            resp = requests.request("POST",inter.host+inter.path,headers=headers_data,json=json_data)
                             resp_json = resp.json()
                             json_string = json.dumps(resp_json, indent=4, ensure_ascii=False)
                             for p in inter_checkpoint:
@@ -49,7 +50,7 @@ def getInterface(report_name,*xargs):
                                     result_pass = False
                                     break
                         elif inter_method == "GET":
-                            resp = requests.request("GET", inter.host + inter.path, headers=eval(inter.header), params=eval(inter.params))
+                            resp = requests.request("GET", inter.host + inter.path, headers=headers_data, params=params_data)
                             resp_json = resp.json()
                             json_string = json.dumps(resp_json, indent=4, ensure_ascii=False)
                             for p in inter_checkpoint:
@@ -68,7 +69,7 @@ def getInterface(report_name,*xargs):
 
                 if result_pass:
                     pass_count += 1
-            res.interfacetestresult_set.create(response_data=json_string,is_pass=result_pass)
+            res.interfacetestresult_set.create(response_data=json_string,is_pass=result_pass,inter_name = inter.name,inter_scene_comment = inter.scene_comment,inter_host = inter.host,inter_path=inter.path,inter_method=inter.method,inter_header=inter.header,inter_json_data = inter.json_data,inter_params=inter.params,inter_checkpoint = inter.checkpoint)
         res.sum_count = len(xargs)
         res.pass_count = pass_count
         res.save()

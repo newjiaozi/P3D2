@@ -22,9 +22,9 @@
 {% if results %}
     <div align="center">
         <table bgcolor="#5f9ea0" border="2 px" align="center">
-            <tr><th>响应结果</th><th>是否通过</th></tr>
+            <tr><th>接口名称</th><th>场景描述</th><th>请求地址</th><th>请求路径</th><th>请求方法</th><th>请求头</th><th>请求信息（POST)</th><th>请求信息(GET)</th><th>检查点</th><th>响应结果</th><th>是否通过</th></tr>
             {% for res in results %}
-                <tr><td>{{ res.response_data }}</td><td>{{ res.is_pass }}</td> </tr>
+                <tr><td><a href="{% url 'index' %}">{{ res.inter_name }}</a></td><td>{{ res.inter_scene_comment }}</td><td>{{ res.inter_host }}</td><td>{{ res.inter_path }}</td><td>{{ res.inter_method }}</td><td>{{ res.inter_header }}</td><td>{{ res.inter_json_data }}</td><td>{{ res.inter_params }}</td><td>{{ res.inter_checkpoint }}</td><td>{{ res.response_data }}</td><td>{{ res.is_pass }}</td> </tr>
             {% endfor %}
         </table>
     </div>
