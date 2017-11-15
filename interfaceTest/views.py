@@ -10,7 +10,7 @@ from django.forms.models import model_to_dict
 
 def index(request):
     try:
-        inter_data = models.InterfaceModel.objects.filter(host="http://192.168.3.20:8081",system_belong=1)
+        inter_data = models.InterfaceModel.objects.filter(host="http://192.168.3.20:8081",system_belong=1,is_delete=False)
         queryInterfaceForm = forms.QueryInterfaceForm()
         f_forms = forms.UploadFileForms()
         request.session["res_count"] = len(inter_data)
@@ -48,7 +48,9 @@ def delInterface(request):
     if request.method == "POST":
         id = request.POST.get("delname")
         inter = models.InterfaceModel.objects.get(pk=id)
-        inter.delete()
+        # inter.delete()
+        inter.is_delete = True
+        inter.save()
         return HttpResponseRedirect(reverse("index"))
     else:
         raise Http404
@@ -69,7 +71,7 @@ def queryInterface(request):
             inter_system = qif_data_clean["system_belong"]
             try:
                 kwargs = tools.handleNullDict(**qif_data_clean)
-
+                kwargs["is_delete"] = False
                 inter_data = models.InterfaceModel.objects.filter(**kwargs)
                 request.session["res_count"] = len(inter_data)
                 return render(request,"interfaceTest/scanInterface.html",{"inter_data":inter_data,"queryInterfaceForm":qif_data,"f_forms":f_forms})
@@ -138,7 +140,6 @@ def editInterPost(request,inter_id):
         data_form = forms.InterfaceForm(data_post)
         if data_form.is_valid():
             data_clean = data_form.cleaned_data
-            print(data_clean)
             try:
                 models.InterfaceModel.objects.filter(pk=inter_id).update(**data_clean)
                 msg = "接口修改成功"
@@ -224,4 +225,10 @@ def toBulkEdit(request):
 
 
 
-
+def toBulkDelete(request):
+    if request.method == "POST":
+        data_post = request.POST
+        interdataId = data_post.getlist("interdataId")
+        delete_count = models.InterfaceModel.objects.filter(id__in = interdataId).update(is_delete = True)
+        request.session["msg"] = "删除成功，共删除%s个接口！" % delete_count
+        return HttpResponseRedirect(reverse("index"))

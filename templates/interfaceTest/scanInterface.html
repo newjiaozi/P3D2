@@ -59,7 +59,7 @@
     <tr id="{{ data.id }}" name="{{ data.id }}"><td><input type="checkbox" value="{{ data.id }}"  name="interdataId" onclick="selectSingle()"></td><td>{{ data.name }}</td><td>{{ data.scene_comment }}</td><td>{{ data.host }}</td><td>{{ data.path }}</td><td>{{ data.system_belong }}</td><td>{{ data.method }}</td><td>{{ data.header }}</td><td>{{ data.json_data }}</td><td>{{ data.params }}</td><td>{{ data.checkpoint }}</td><td><input type="button" value="编辑" id="edit{{ data.id }}" onclick="editInter({{ data.id }})"><input type="button" value="删除" id="del{{ data.id }}" name="{{ data.id }}" onclick="confirmDel({{ data.id }})"></td></tr>
     {% endfor %}
         <tr><th colspan="12"><label>测试报告名称：</label><input type="text" name="report_name" id="report_name" required></th></tr>
-    <tr><th colspan="6"><input type="button" value="提交执行" onclick="actionTest()"></th><th colspan="6"><input type="button" value="批量编辑" onclick="actionEdit()"></th></tr>
+    <tr><th colspan="4"><input type="button" value="提交执行" onclick="actionTest()"></th><th colspan="4"><input type="button" value="批量编辑" onclick="actionEdit()"></th><th colspan="4"><input type="button" value="批量删除" onclick="actionBulkDelete()"></th></tr>
     </table>
     </form>
     </div>
@@ -196,6 +196,32 @@
             sub_sels = document.getElementById("actionTest");
             sub_sels.action = "{% url 'toBulkEdit' %}"
             sub_sels.submit();
+        }
+
+    }
+
+
+
+
+    function actionBulkDelete() {
+        var sels = document.getElementsByName("interdataId");
+        var checked_count = 0;
+        for(var i=0;i<sels.length;i++){
+            if(sels[i].checked == true){
+                checked_count += 1;
+            }else{
+                continue;
+            }
+
+        }
+        if(checked_count == 0){
+            alert("未选中任何接口");
+        }else if(confirm("确认删除？")){
+            sub_sels = document.getElementById("actionTest");
+            sub_sels.action = "{% url 'toBulkDelete' %}"
+            sub_sels.submit();
+        }else{
+            return
         }
 
     }

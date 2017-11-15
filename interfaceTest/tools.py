@@ -1,9 +1,9 @@
 
 import  requests
 from . import models
-from datetime import datetime
 import json
 import xlrd
+from django.utils.timezone import now
 
 def handleNullDict(**kwargs):
     re_kwargs = {}
@@ -18,7 +18,7 @@ def handleNullDict(**kwargs):
 
 
 def getInterface(report_name,*xargs):
-        data_time = datetime.now()
+        data_time = now()
         try:
             res = models.ResultModel.objects.create(name=report_name, date_time=data_time)
         except Exception as e:

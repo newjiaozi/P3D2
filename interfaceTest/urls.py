@@ -29,4 +29,6 @@ urlpatterns = [
     path('queryResultDetail/<int:report_id>/',views.queryResultDetail,name="queryResultDetail"),
     path('bulkEdit/',views.bulkEdit,name="bulkEdit"),
     path('toBulkEdit/',views.toBulkEdit,name="toBulkEdit"),
+    path('toBulkDelete/',views.toBulkDelete,name="toBulkDelete"),
+    # path('bulkDelete/',views.bulkDelete,name="bulkDelete"),
 ]
