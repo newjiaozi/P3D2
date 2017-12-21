@@ -144,6 +144,8 @@ def editInterPost(request,inter_id):
                 models.InterfaceModel.objects.filter(pk=inter_id).update(**data_clean)
                 msg = "接口修改成功"
             except Exception as e:
+
+
                 msg = "接口修改异常"
                 raise Http404(e)
         else:
